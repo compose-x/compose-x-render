@@ -2,7 +2,7 @@
 github_url = "https://github.com/compose-x/compose_x_render"
 
 [tool.tbump.version]
-current = "0.0.1"
+current = "0.1.0"
 
 regex = '''
   (?P<major>\d+)
