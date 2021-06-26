@@ -7,7 +7,6 @@
 import argparse
 import sys
 
-
 from compose_x_render.compose_x_render import ComposeDefinition
 
 
@@ -42,12 +41,14 @@ def main():
         "--no-interpolate",
         help="Preserves environment variables and leaves text as-is.",
         action="store_true",
-        default=False
+        default=False,
     )
     parser.add_argument("_", nargs="*")
     args = parser.parse_args()
     kwargs = vars(args)
-    compose_file = ComposeDefinition(kwargs[ComposeDefinition.input_file_arg], no_interpolate=args.no_interpolate)
+    compose_file = ComposeDefinition(
+        kwargs[ComposeDefinition.input_file_arg], no_interpolate=args.no_interpolate
+    )
     compose_file.write_output(args.output_file, kwargs[ComposeDefinition.compose_x_arg])
     return 0
 

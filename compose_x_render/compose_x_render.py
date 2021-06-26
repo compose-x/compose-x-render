@@ -4,18 +4,19 @@
 
 """Main module."""
 
-import yaml
 from copy import deepcopy
 
+import yaml
+
 try:
-    from yaml import CLoader as Loader, CDumper as Dumper
+    from yaml import CDumper as Dumper
+    from yaml import CLoader as Loader
 except ImportError:
     from yaml import Loader, Dumper
 
-
-from compose_x_render.consts import SERVICES, SECRETS, VOLUMES, PORTS
-from compose_x_render.networking import set_service_ports
+from compose_x_render.consts import PORTS, SECRETS, SERVICES, VOLUMES
 from compose_x_render.envsubst import expandvars
+from compose_x_render.networking import set_service_ports
 
 
 def keyisset(x, y):
@@ -151,7 +152,9 @@ def interpolate_env_vars(content, default_empty):
                 elif isinstance(item, str):
                     content[key][count] = expandvars(item, default=default_empty)
         elif isinstance(content[key], str):
-            content[key] = expandvars(content[key], default=default_empty, skip_escaped=True)
+            content[key] = expandvars(
+                content[key], default=default_empty, skip_escaped=True
+            )
 
 
 def merge_services_from_files(original_services, override_services):
@@ -326,7 +329,9 @@ class ComposeDefinition(object):
     input_file_arg = "ComposeFiles"
     compose_x_arg = "ForCompose-X"
 
-    def __init__(self, files_list, content=None, no_interpolate=False, keep_if_undefined=False):
+    def __init__(
+        self, files_list, content=None, no_interpolate=False, keep_if_undefined=False
+    ):
         """
         Main function to define and merge the content of the docker files
 
