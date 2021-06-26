@@ -91,5 +91,7 @@ release-test: dist ## package and upload a release
 	twine check dist/* || echo Failed to validate release
 	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
-conform	: ## Conform to a standard of coding syntax
-	black compose_x_render tests
+conform : ## Conform to a standard of coding syntax
+		isort --profile black compose_x_render
+		black compose_x_render tests setup.py
+		find compose_x_render -name "*.json" -type f  -exec sed -i '1s/^\xEF\xBB\xBF//' {} +

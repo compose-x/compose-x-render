@@ -88,6 +88,7 @@ todo_include_todos = True
 # html_theme = 'alabaster'
 
 import sphinx_rtd_theme
+import sphinx_material
 
 extensions += [
     "sphinx.ext.todo",
@@ -99,14 +100,38 @@ extensions += [
 sitemap_locales = ["en"]
 html_baseurl = "https://docs.render.composex.io"
 
-html_theme = "sphinx_rtd_theme"
-
+extensions.append("sphinx_material")
+html_theme_path = sphinx_material.html_theme_path()
+html_context = sphinx_material.get_html_context()
+html_theme = "sphinx_material"
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.  For a list of options available for each theme, see the
 # documentation.
 #
 html_theme_options = {
-    "collapse_navigation": False,
+    # Set the name of the project to appear in the navigation.
+    "nav_title": "ECS Compose-X",
+    # Set you GA account ID to enable tracking
+    # 'google_analytics_account': 'UA-XXXXX',
+    # Specify a base_url used to generate sitemap.xml. If not
+    # specified, then no sitemap will be built.
+    "base_url": "https://docs.render.composex.io",
+    "html_minify": False,
+    "html_prettify": True,
+    "css_minify": True,
+    # Set the color and the accent color
+    "color_primary": "blue",
+    "color_accent": "light-blue",
+    # Set the repo location to get a badge with stats
+    "repo_url": "https://github.com/compose-x/compose_x_render/",
+    "repo_name": "compose-x/compose_x_render",
+    "repo_type": "github",
+    # Visible levels of the global TOC; -1 means unlimited
+    "globaltoc_depth": 1,
+    # If False, expand all TOC entries
+    "globaltoc_collapse": False,
+    # If True, show hidden TOC entries
+    "globaltoc_includehidden": False,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
