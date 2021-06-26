@@ -132,7 +132,7 @@ def merge_service_definition(original_def, override_def, nested=False):
     return original_def
 
 
-def interpolate_env_vars(content):
+def interpolate_env_vars(content, default_empty):
     """
     Function to interpolate env vars from content
 
@@ -143,15 +143,15 @@ def interpolate_env_vars(content):
         return
     for key in content.keys():
         if isinstance(content[key], dict):
-            interpolate_env_vars(content[key])
+            interpolate_env_vars(content[key], default_empty)
         elif isinstance(content[key], list):
             for count, item in enumerate(content[key]):
                 if isinstance(item, dict):
-                    interpolate_env_vars(item)
+                    interpolate_env_vars(item, default_empty)
                 elif isinstance(item, str):
-                    content[key][count] = expandvars(item)
+                    content[key][count] = expandvars(item, default=default_empty)
         elif isinstance(content[key], str):
-            content[key] = expandvars(content[key], default="")
+            content[key] = expandvars(content[key], default=default_empty, skip_escaped=True)
 
 
 def merge_services_from_files(original_services, override_services):
@@ -326,10 +326,11 @@ class ComposeDefinition(object):
     input_file_arg = "ComposeFiles"
     compose_x_arg = "ForCompose-X"
 
-    def __init__(self, files_list, content=None):
+    def __init__(self, files_list, content=None, no_interpolate=False, keep_if_undefined=False):
         """
         Main function to define and merge the content of the docker files
 
+        :param list files_list: list of files (path) to merge
         :param dict content:
         """
         if content is None and len(files_list) == 1:
@@ -344,7 +345,9 @@ class ComposeDefinition(object):
             self.definition = content
         if keyisset(SERVICES, self.definition):
             render_services_ports(self.definition[SERVICES])
-        interpolate_env_vars(self.definition)
+        default_empty = None if keep_if_undefined else ""
+        if not no_interpolate:
+            interpolate_env_vars(self.definition, default_empty)
 
     def write_output(self, output_file=None, for_compose_x=False):
         """
