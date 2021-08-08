@@ -46,9 +46,7 @@ def main():
     parser.add_argument("_", nargs="*")
     args = parser.parse_args()
     kwargs = vars(args)
-    compose_file = ComposeDefinition(
-        kwargs[ComposeDefinition.input_file_arg], no_interpolate=args.no_interpolate
-    )
+    compose_file = ComposeDefinition(kwargs[ComposeDefinition.input_file_arg], no_interpolate=args.no_interpolate)
     compose_file.write_output(args.output_file, kwargs[ComposeDefinition.compose_x_arg])
     return 0
 
