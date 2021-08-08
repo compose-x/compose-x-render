@@ -1,3 +1,49 @@
+[tool.poetry]
+name = "compose_x_render"
+version = "0.1.0"
+description = "Library & Tool to compile/merge compose files with top level extension fields"
+authors = ["John Preston <john@compose-x.io>"]
+license = "MPL-2.0"
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+]
+keywords = ["compose-x", "aws", "jsonschema", "docker", "compose-spec"]
+include = [
+    "MANIFEST.in",
+    "LICENSE"
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+PyYAML = "^5.4.1"
+argparse = "^1.4.0"
+
+[tool.poetry.dev-dependencies]
+sphinx-material = "^0.0.34"
+isort = "^5.9.3"
+black = "^21.7b0"
+Sphinx = "^4.1"
+tbump = "6.3.1"
+pre-commit = "^2.14.0"
+behave = "^1.2.6"
+coverage = "^5.5"
+flake8 = "^3.9.2"
+tox = "^3.24.1"
+pytest = "^6.2.4"
+
+[tool.poetry.scripts]
+compose-x-render = "compose_x_render.cli:main"
+ecs-compose-x-render = "compose_x_render.cli:main"
+
 [tool.tbump]
 github_url = "https://github.com/compose-x/compose_x_render"
 
@@ -18,10 +64,7 @@ message_template = "Bump to {new_version}"
 tag_template = "v{new_version}"
 
 [[tool.tbump.file]]
-src = "setup.py"
-
-[[tool.tbump.file]]
-src = "setup.cfg"
+src = "pyproject.toml"
 
 [[tool.tbump.file]]
 src = "compose_x_render/__init__.py"
@@ -30,6 +73,17 @@ src = "compose_x_render/__init__.py"
 name = "Files format"
 cmd = "make conform"
 
+[tool.black]
+skip-string-normalization = true
+line-length = 120
+
 [tool.isort]
-profile = "black"
 multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 120
+known_first_party = "kelvin"
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
