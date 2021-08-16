@@ -30,7 +30,9 @@ def set_service_ports(ports):
     service_ports = []
     for port in ports:
         if not isinstance(port, (str, dict, int)):
-            raise TypeError("ports must be of types", dict, "or", list, "got", type(port))
+            raise TypeError(
+                "ports must be of types", dict, "or", list, "got", type(port)
+            )
         if isinstance(port, str):
             service_ports.append(
                 {

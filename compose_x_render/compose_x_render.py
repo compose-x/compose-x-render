@@ -67,11 +67,19 @@ def merge_service_definition(original_def, override_def, nested=False):
     if not nested:
         original_def = deepcopy(original_def)
     for key in override_def.keys():
-        if isinstance(override_def[key], dict) and keyisset(key, original_def) and isinstance(original_def[key], dict):
+        if (
+            isinstance(override_def[key], dict)
+            and keyisset(key, original_def)
+            and isinstance(original_def[key], dict)
+        ):
             merge_service_definition(original_def[key], override_def[key], nested=True)
         elif key not in original_def:
             original_def[key] = override_def[key]
-        elif isinstance(override_def[key], list) and key in original_def.keys() and key != "ports":
+        elif (
+            isinstance(override_def[key], list)
+            and key in original_def.keys()
+            and key != "ports"
+        ):
             if not isinstance(original_def[key], list):
                 raise TypeError(
                     "Cannot merge",
@@ -81,8 +89,14 @@ def merge_service_definition(original_def, override_def, nested=False):
                     "with",
                     type(override_def[key]),
                 )
-            original_def[key] = handle_lists_merges(original_def[key], override_def[key])
-        elif isinstance(override_def[key], list) and key in original_def.keys() and key == "ports":
+            original_def[key] = handle_lists_merges(
+                original_def[key], override_def[key]
+            )
+        elif (
+            isinstance(override_def[key], list)
+            and key in original_def.keys()
+            and key == "ports"
+        ):
             original_def[key] = merge_ports(original_def[key], override_def[key])
         elif isinstance(override_def[key], str):
             original_def[key] = expandvars(override_def[key])
@@ -110,7 +124,9 @@ def interpolate_env_vars(content, default_empty):
                 elif isinstance(item, str):
                     content[key][count] = expandvars(item, default=default_empty)
         elif isinstance(content[key], str):
-            content[key] = expandvars(content[key], default=default_empty, skip_escaped=True)
+            content[key] = expandvars(
+                content[key], default=default_empty, skip_escaped=True
+            )
 
 
 def merge_services_from_files(original_services, override_services):
@@ -148,7 +164,12 @@ def handle_lists_merges(original_list, override_list, uniqfy=False):
     if uniqfy:
         final_list = [dict(y) for y in set(tuple(x.items()) for x in final_list)]
     original_str_items = [item for item in original_list if isinstance(item, list)]
-    final_list += list(set(original_str_items + [item for item in override_list if isinstance(item, list)]))
+    final_list += list(
+        set(
+            original_str_items
+            + [item for item in override_list if isinstance(item, list)]
+        )
+    )
 
     origin_list_items = [item for item in original_list if isinstance(item, list)]
     override_list_items = [item for item in override_list if isinstance(item, list)]
@@ -182,9 +203,13 @@ def handle_lists_merge_conditions(original_def, override_def, key):
             type(override_def[key]),
         )
     if key in keys_to_uniqfy:
-        original_def[key] = handle_lists_merges(original_def[key], override_def[key], uniqfy=True)
+        original_def[key] = handle_lists_merges(
+            original_def[key], override_def[key], uniqfy=True
+        )
     else:
-        original_def[key] = handle_lists_merges(original_def[key], override_def[key], uniqfy=False)
+        original_def[key] = handle_lists_merges(
+            original_def[key], override_def[key], uniqfy=False
+        )
 
 
 def load_compose_file(file_path):
@@ -213,7 +238,11 @@ def merge_definitions(original_def, override_def, nested=False):
     elif not isinstance(override_def, dict):
         raise TypeError("Expected", dict, "got", type(override_def))
     for key in override_def.keys():
-        if isinstance(override_def[key], dict) and keyisset(key, original_def) and isinstance(original_def[key], dict):
+        if (
+            isinstance(override_def[key], dict)
+            and keyisset(key, original_def)
+            and isinstance(original_def[key], dict)
+        ):
             merge_definitions(original_def[key], override_def[key], nested=True)
         elif key not in original_def:
             original_def[key] = override_def[key]
@@ -272,7 +301,9 @@ class ComposeDefinition(object):
     input_file_arg = "ComposeFiles"
     compose_x_arg = "ForCompose-X"
 
-    def __init__(self, files_list, content=None, no_interpolate=False, keep_if_undefined=False):
+    def __init__(
+        self, files_list, content=None, no_interpolate=False, keep_if_undefined=False
+    ):
         """
         Main function to define and merge the content of the docker files
 
