@@ -3,7 +3,7 @@
 # Copyright 2020-2021 John Mille <john@compose-x.io>
 
 """Main module."""
-
+import json
 from copy import deepcopy
 
 import yaml
@@ -14,39 +14,11 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
+from compose_x_common.compose_x_common import keyisset
+
 from compose_x_render.consts import PORTS, SECRETS, SERVICES, VOLUMES
 from compose_x_render.envsubst import expandvars
 from compose_x_render.networking import set_service_ports
-
-
-def keyisset(x, y):
-    """
-    Macro to figure if the the dictionary contains a key and that the key is not empty
-
-    :param str x: The key to check presence in the dictionary
-    :param dict y: The dictionary to check for
-
-    :returns: True/False
-    :rtype: bool
-    """
-    if isinstance(y, dict) and x in y.keys() and y[x]:
-        return True
-    return False
-
-
-def keypresent(x, y):
-    """
-    Macro to figure if the the dictionary contains a key and that the key is not empty
-
-    :param str x: The key to check presence in the dictionary
-    :param dict y: The dictionary to check for
-
-    :returns: True/False
-    :rtype: bool
-    """
-    if isinstance(y, dict) and x in y.keys():
-        return True
-    return False
 
 
 def render_services_ports(services):
@@ -345,3 +317,16 @@ class ComposeDefinition(object):
         else:
             with open(output_file, "w") as file_fd:
                 file_fd.write(yaml.dump(output, Dumper=Dumper))
+
+    def output_services_images(self, output_file=None):
+        output_map = {}
+        for name, service in self.definition[SERVICES].items():
+            if keyisset("image", service):
+                output_map[name] = service["image"]
+            else:
+                print(f"Service {name} has no image defined. Skipping")
+        if output_file:
+            with open(output_file, "w") as file_fd:
+                file_fd.write(json.dumps(output_map))
+        else:
+            print(json.dumps(output_map, indent=2))

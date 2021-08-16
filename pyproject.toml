@@ -26,6 +26,10 @@ include = [
 python = "^3.7"
 PyYAML = "^5.4.1"
 argparse = "^1.4.0"
+compose-x-common = "^0.1.0"
+
+[tool.poetry.extras]
+aws = ["boto3"]
 
 [tool.poetry.dev-dependencies]
 sphinx-material = "^0.0.34"
@@ -74,16 +78,17 @@ name = "Files format"
 cmd = "make conform"
 
 [tool.black]
-skip-string-normalization = true
-line-length = 120
+line-length = 88
 
 [tool.isort]
+profile = "black"
 multi_line_output = 3
 include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
-line_length = 120
 known_first_party = "kelvin"
+
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

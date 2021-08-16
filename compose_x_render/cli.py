@@ -43,11 +43,20 @@ def main():
         action="store_true",
         default=False,
     )
+    parser.add_argument(
+        "--services-images-json",
+        action="store_true",
+        default=False,
+        help="Outputs a key-value definition of the services and their images only"
+    )
     parser.add_argument("_", nargs="*")
     args = parser.parse_args()
     kwargs = vars(args)
     compose_file = ComposeDefinition(kwargs[ComposeDefinition.input_file_arg], no_interpolate=args.no_interpolate)
-    compose_file.write_output(args.output_file, kwargs[ComposeDefinition.compose_x_arg])
+    if args.services_images_json:
+        compose_file.output_services_images(args.output_file)
+    else:
+        compose_file.write_output(args.output_file, kwargs[ComposeDefinition.compose_x_arg])
     return 0
 
 
