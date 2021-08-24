@@ -330,13 +330,9 @@ class ComposeDefinition(object):
             interpolate_env_vars(self.definition, default_empty)
         source = pkg_files("compose_x_render").joinpath("compose-spec.json")
         print(source)
-        resolver = jsonschema.RefResolver(
-            f"file://{path.abspath(path.dirname(source))}/", None
-        )
         jsonschema.validate(
             self.definition,
             json.loads(source.read_text()),
-            resolver=resolver,
         )
 
     def write_output(self, output_file=None, for_compose_x=False):
