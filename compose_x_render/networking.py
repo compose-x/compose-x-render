@@ -47,7 +47,8 @@ def set_service_ports(ports):
             service_ports.append(
                 {
                     "protocol": parts.group("protocol") or "tcp",
-                    "published": int(parts.group("published")) or int(parts.group("target")),
+                    "published": int(parts.group("published"))
+                    or int(parts.group("target")),
                     "target": int(parts.group("target")),
                     "mode": "awsvpc",
                 }

@@ -4,13 +4,12 @@
 
 """Main module."""
 import json
-from os import path
-import jsonschema
-from importlib_resources import files as pkg_files
-
 from copy import deepcopy
+from os import path
 
+import jsonschema
 import yaml
+from importlib_resources import files as pkg_files
 
 try:
     from yaml import CDumper as Dumper
