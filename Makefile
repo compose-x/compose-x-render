@@ -95,3 +95,6 @@ conform : ## Conform to a standard of coding syntax
 		isort --profile black compose_x_render
 		black compose_x_render tests setup.py
 		find compose_x_render -name "*.json" -type f  -exec sed -i '1s/^\xEF\xBB\xBF//' {} +
+
+get-schema:
+	curl -s https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json -o compose_x_render/compose-spec.json

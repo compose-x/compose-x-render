@@ -2,6 +2,8 @@
 #  SPDX-License-Identifier: MPL-2.0
 #  Copyright 2020-2021 John Mille <john@compose-x.io>
 
+import re
+
 
 def define_protocol(port_string):
     """
@@ -34,11 +36,19 @@ def set_service_ports(ports):
                 "ports must be of types", dict, "or", list, "got", type(port)
             )
         if isinstance(port, str):
+            ports_str_re = re.compile(
+                r"(?:(?P<published>\d{1,5})?(?::))?(?P<target>(?=)\d{1,5})(?P<protocol>/udp|/tcp)?"
+            )
+            if not ports_str_re.match(port):
+                raise ValueError(
+                    f"Port {port} is not valid. Must match", ports_str_re.pattern
+                )
+            parts = ports_str_re.match(port)
             service_ports.append(
                 {
-                    "protocol": define_protocol(port),
-                    "published": int(port.split(":")[0]),
-                    "target": int(port.split(":")[-1].split("/")[0].strip()),
+                    "protocol": parts.group("protocol") or "tcp",
+                    "published": int(parts.group("published")) or int(parts.group("target")),
+                    "target": int(parts.group("target")),
                     "mode": "awsvpc",
                 }
             )

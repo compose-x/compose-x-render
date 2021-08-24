@@ -1,9 +1,13 @@
-#  -*- coding: utf-8 -*-
-# SPDX-License-Identifier: MPL-2.0
-# Copyright 2020-2021 John Mille <john@compose-x.io>
+#   -*- coding: utf-8 -*-
+#  SPDX-License-Identifier: MPL-2.0
+#  Copyright 2020-2021 John Mille <john@compose-x.io>
 
 """Main module."""
 import json
+from os import path
+import jsonschema
+from importlib_resources import files as pkg_files
+
 from copy import deepcopy
 
 import yaml
@@ -325,6 +329,16 @@ class ComposeDefinition(object):
         default_empty = None if keep_if_undefined else ""
         if not no_interpolate:
             interpolate_env_vars(self.definition, default_empty)
+        source = pkg_files("compose_x_render").joinpath("compose-spec.json")
+        print(source)
+        resolver = jsonschema.RefResolver(
+            f"file://{path.abspath(path.dirname(source))}/", None
+        )
+        jsonschema.validate(
+            self.definition,
+            json.loads(source.read_text()),
+            resolver=resolver,
+        )
 
     def write_output(self, output_file=None, for_compose_x=False):
         """
