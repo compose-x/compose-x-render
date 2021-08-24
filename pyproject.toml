@@ -19,7 +19,8 @@ classifiers = [
 keywords = ["compose-x", "aws", "jsonschema", "docker", "compose-spec"]
 include = [
     "MANIFEST.in",
-    "LICENSE"
+    "LICENSE",
+    "compose_x_render/compose-spec.json"
 ]
 
 [tool.poetry.dependencies]
