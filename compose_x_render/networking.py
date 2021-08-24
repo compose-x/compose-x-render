@@ -37,7 +37,7 @@ def set_service_ports(ports):
             )
         if isinstance(port, str):
             ports_str_re = re.compile(
-                r"(?:(?P<published>\d{1,5})?(?::))?(?P<target>(?=)\d{1,5})(?P<protocol>/udp|/tcp)?"
+                r"(?:(?P<published>\d{1,5})?(?::))?(?P<target>\d{1,5})(?:(?=/(?P<protocol>udp|tcp)))?"
             )
             if not ports_str_re.match(port):
                 raise ValueError(
