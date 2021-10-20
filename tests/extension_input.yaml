@@ -1,0 +1,69 @@
+version: '3.8'
+secrets:
+  abcd: {}
+  zyx: {}
+services:
+  app01:
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: a-custom-name
+        awslogs-create-group: "true"
+    sysctls:
+      - net.core.somaxconn=2048
+      - net.ipv4.tcp_syncookies=1
+    cap_add:
+      - ALL
+    deploy:
+      update_config:
+        failure_action: rollback
+      labels:
+        ecs.ephemeral.storage: 65
+        ecs.task.family: bignicefamily
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 1GB
+    environment:
+      LOGLEVEL: DEBUG
+      SHELLY: /bin/bash
+      TERMY: screen
+    image: nginx
+    ports:
+      - mode: awsvpc
+        protocol: tcp
+        published: 5000
+        target: 5000
+      - 8080:8080
+      - 80
+      - 5000:8000
+      - 9092/tcp
+    expose:
+      - 81/tcp
+    secrets:
+      - zyx
+    x-logging:
+      RetentionInDays: 42
+      CreateLogGroup: False
+    volumes:
+      - normal-vol:/var/tmp/shared
+      - some-volume:/var/anotherpath:ro
+
+  empty:
+    image: scratch
+    environment:
+      test: "${!DO_NOT_INTERPRET}"
+      test2: ${TEST:-testing}
+      test3: ${TEST:+test}
+
+  emptyness:
+    image: scratch
+    environment:
+      - test=${!DO_NOT_INTERPRET}"
+      - test2=${TEST:-testing}
+      - test3=${TEST:+test}
+
+volumes:
+  shared-images: {}
+  some-volume: {}
+  normal-vol: {}
