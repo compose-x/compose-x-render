@@ -22,7 +22,9 @@ def test_valid_input():
 
 
 def test_valid_extension_input():
-    test = ComposeDefinition([f"{HERE}/valid_input.yaml", f"{HERE}/extension_input.yaml"])
+    test = ComposeDefinition(
+        [f"{HERE}/valid_input.yaml", f"{HERE}/extension_input.yaml"]
+    )
 
     temp_dir = TemporaryDirectory()
     test.write_output(output_file=f"{temp_dir.name}/test.yaml", for_compose_x=True)
@@ -30,7 +32,9 @@ def test_valid_extension_input():
 
 def test_invalid_extension_input():
     with pytest.raises(TypeError):
-        test = ComposeDefinition([f"{HERE}/valid_input.yaml", f"{HERE}/invalid_extension.yaml"])
+        test = ComposeDefinition(
+            [f"{HERE}/valid_input.yaml", f"{HERE}/invalid_extension.yaml"]
+        )
 
 
 def test_fail_json_validation():

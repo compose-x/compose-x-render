@@ -24,21 +24,22 @@ def set_service_ports(ports):
                     f"Port {port} is not valid. Must match", ports_str_re.pattern
                 )
             port = {
-                    "protocol": parts.group("protocol") or "tcp",
-                    "published": int(parts.group("published")) if isinstance(parts.group("published"), str) else
-                    int(parts.group("target")),
-                    "target": int(parts.group("target")),
-                    "mode": "awsvpc",
-                }
+                "protocol": parts.group("protocol") or "tcp",
+                "published": int(parts.group("published"))
+                if isinstance(parts.group("published"), str)
+                else int(parts.group("target")),
+                "target": int(parts.group("target")),
+                "mode": "awsvpc",
+            }
         elif isinstance(port, dict):
             port["mode"] = "awsvpc"
         elif isinstance(port, int):
             port = {
-                    "protocol": "tcp",
-                    "published": port,
-                    "target": port,
-                    "mode": "awsvpc",
-                }
+                "protocol": "tcp",
+                "published": port,
+                "target": port,
+                "mode": "awsvpc",
+            }
         if port["published"] not in [s_port["published"] for s_port in service_ports]:
             service_ports.append(port)
         else:
