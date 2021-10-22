@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "compose_x_render"
-version = "0.4.0"
+version = "0.4.1"
 description = "Library & Tool to compile/merge compose files with top level extension fields"
 authors = ["John Preston <john@compose-x.io>"]
 license = "MPL-2.0"
@@ -56,7 +56,7 @@ ecs-compose-x-render = "compose_x_render.cli:main"
 github_url = "https://github.com/compose-x/compose_x_render"
 
 [tool.tbump.version]
-current = "0.4.0"
+current = "0.4.1"
 
 regex = '''
   (?P<major>\d+)

@@ -6,4 +6,4 @@
 
 __author__ = """John Mille"""
 __email__ = "john@compose-x.io"
-__version__ = "0.4.0"
+__version__ = "0.4.1"
