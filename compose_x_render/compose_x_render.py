@@ -329,7 +329,6 @@ class ComposeDefinition(object):
         if not no_interpolate:
             interpolate_env_vars(self.definition, default_empty)
         source = pkg_files("compose_x_render").joinpath("compose-spec.json")
-        print(source)
         jsonschema.validate(
             self.definition,
             json.loads(source.read_text()),

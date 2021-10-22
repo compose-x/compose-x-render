@@ -18,7 +18,6 @@ def set_service_ports(ports):
                 r"(?:(?P<published>\d{1,5})?(?::))?(?P<target>\d{1,5})(?:(?=/(?P<protocol>udp|tcp)))?"
             )
             parts = ports_str_re.match(port)
-            print(parts)
             if not parts:
                 raise ValueError(
                     f"Port {port} is not valid. Must match", ports_str_re.pattern
