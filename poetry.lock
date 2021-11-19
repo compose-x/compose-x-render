@@ -1150,7 +1150,7 @@ aws = []
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "ab4da0734d6bb72760c9ee7f8b09c9ea95dff7af597e166316bb676beb22b5b6"
+content-hash = "1ee367f168dcf46ca18f64ba4a068afab0d59471793d1678fc09ac834ffe5c7b"
 
 [metadata.files]
 alabaster = [
