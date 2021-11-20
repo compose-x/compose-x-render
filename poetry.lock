@@ -208,14 +208,14 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "compose-x-common"
-version = "0.2.2"
+version = "0.3.0"
 description = "Common Library for Compose-X Projects"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 
 [package.extras]
-aws = ["boto3 (>=1.18.0,<1.20)"]
+aws = ["boto3 (>=1.18,<2.0)"]
 
 [[package]]
 name = "contextlib2"
@@ -547,7 +547,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
 [[package]]
 name = "pkginfo"
-version = "1.8.0"
+version = "1.8.1"
 description = "Query metadatdata from sdists / bdists / installed packages."
 category = "dev"
 optional = false
@@ -1150,7 +1150,7 @@ aws = []
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "1ee367f168dcf46ca18f64ba4a068afab0d59471793d1678fc09ac834ffe5c7b"
+content-hash = "51b69cfd13ab1b9f8d5c33722e740416f79c6e63dd782b8aff27d8d6d1bf0852"
 
 [metadata.files]
 alabaster = [
@@ -1270,8 +1270,8 @@ colorama = [
     {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
 ]
 compose-x-common = [
-    {file = "compose_x_common-0.2.2-py3-none-any.whl", hash = "sha256:1961a215d0c382d8164c7a0cc18f672d2fff98e6e1ab4f6097e84be1079057fe"},
-    {file = "compose_x_common-0.2.2.tar.gz", hash = "sha256:5a424f7cedcc91f7b5835988c12c67e5675707c640fa2e55b54a99345feb7e30"},
+    {file = "compose_x_common-0.3.0-py3-none-any.whl", hash = "sha256:80b224641a0420c13554846a746e864d7a464c8dd7082f181c92be7be502301e"},
+    {file = "compose_x_common-0.3.0.tar.gz", hash = "sha256:278694ccae490e17bfab81bd02a25a303466989c27f711859c1c2a4646da4741"},
 ]
 contextlib2 = [
     {file = "contextlib2-21.6.0-py2.py3-none-any.whl", hash = "sha256:3fbdb64466afd23abaf6c977627b75b6139a5a3e8ce38405c5b413aed7a0471f"},
@@ -1567,8 +1567,8 @@ pathspec = [
     {file = "pathspec-0.9.0.tar.gz", hash = "sha256:e564499435a2673d586f6b2130bb5b95f04a3ba06f81b8f895b651a3c76aabb1"},
 ]
 pkginfo = [
-    {file = "pkginfo-1.8.0-py2.py3-none-any.whl", hash = "sha256:afe3563b450fbeac7d4ef4835f8c29fc8ad77959e3f599d5ebc74c02fe51801e"},
-    {file = "pkginfo-1.8.0.tar.gz", hash = "sha256:99d1775f3477508da299575567e4ffb678895912f51c7cbacd264d1815d11d19"},
+    {file = "pkginfo-1.8.1-py2.py3-none-any.whl", hash = "sha256:bb55a6c017d50f2faea5153abc7b05a750e7ea7ae2cbb7fb3ad6f1dcf8d40988"},
+    {file = "pkginfo-1.8.1.tar.gz", hash = "sha256:65175ffa2c807220673a41c371573ac9a1ea1b19ffd5eef916278f428319934f"},
 ]
 platformdirs = [
     {file = "platformdirs-2.4.0-py3-none-any.whl", hash = "sha256:8868bbe3c3c80d42f20156f22e7131d2fb321f5bc86a2a345375c6481a67021d"},
