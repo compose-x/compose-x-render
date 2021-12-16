@@ -352,10 +352,10 @@ class ComposeDefinition(object):
         else:
             output = self.definition
         if not output_file:
-            print(yaml.dump(output, Dumper=Dumper))
+            print(yaml.safe_dump(output))
         else:
             with open(output_file, "w") as file_fd:
-                file_fd.write(yaml.dump(output, Dumper=Dumper))
+                file_fd.write(yaml.safe_dump(output))
 
     def output_services_images(self, output_file=None):
         output_map = {}
