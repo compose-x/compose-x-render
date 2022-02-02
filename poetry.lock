@@ -224,14 +224,14 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "compose-x-common"
-version = "0.4.0"
+version = "0.4.2"
 description = "Common Library for Compose-X Projects"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
-boto3 = ">=1.20.26,<2.0.0"
+boto3 = ">=1.20.46,<2.0.0"
 flatdict = ">=4.0.1,<5.0.0"
 install = ">=1.3.5,<2.0.0"
 python-dateutil = ">=2.8.2,<3.0.0"
@@ -1064,7 +1064,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "tomlkit"
-version = "0.8.0"
+version = "0.9.0"
 description = "Style preserving TOML library"
 category = "dev"
 optional = false
@@ -1210,7 +1210,7 @@ aws = []
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "0238460f77a0001ecda5d81b3fae575e298fbc2cfa63ae5dd3a602380aeb50a5"
+content-hash = "839c14590f158d1151bac5ed3d422b77e416c6fcc2bd465b47aec2a5816ea18c"
 
 [metadata.files]
 alabaster = [
@@ -1334,8 +1334,8 @@ colorama = [
     {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
 ]
 compose-x-common = [
-    {file = "compose_x_common-0.4.0-py3-none-any.whl", hash = "sha256:fabe4fad56781f8f9f8c30d12c3c6462a7908c7ba55ee7ccf06e92b3e8c43239"},
-    {file = "compose_x_common-0.4.0.tar.gz", hash = "sha256:acbe95e15f492e2dec6dcab7f885e95e6e19f813655c453522c689f5bb5e958e"},
+    {file = "compose_x_common-0.4.2-py3-none-any.whl", hash = "sha256:c026a3610f9f9a708ba7b301ba0d5d820baa6d4fcb610551411cbefd7f6cecfa"},
+    {file = "compose_x_common-0.4.2.tar.gz", hash = "sha256:65047b3d5c298b4e615346b9aa23c35c732fcf31a6a43f992de2b79be62fcf49"},
 ]
 contextlib2 = [
     {file = "contextlib2-21.6.0-py2.py3-none-any.whl", hash = "sha256:3fbdb64466afd23abaf6c977627b75b6139a5a3e8ce38405c5b413aed7a0471f"},
@@ -1852,8 +1852,8 @@ tomli = [
     {file = "tomli-1.2.3.tar.gz", hash = "sha256:05b6166bff487dc068d322585c7ea4ef78deed501cc124060e0f238e89a9231f"},
 ]
 tomlkit = [
-    {file = "tomlkit-0.8.0-py3-none-any.whl", hash = "sha256:b824e3466f1d475b2b5f1c392954c6cb7ea04d64354ff7300dc7c14257dc85db"},
-    {file = "tomlkit-0.8.0.tar.gz", hash = "sha256:29e84a855712dfe0e88a48f6d05c21118dbafb283bb2eed614d46f80deb8e9a1"},
+    {file = "tomlkit-0.9.0-py3-none-any.whl", hash = "sha256:c1b0fc73abd4f1e77c29ea4061ca0f2e11cbfb77342e17df3d3fdd496fc3f899"},
+    {file = "tomlkit-0.9.0.tar.gz", hash = "sha256:5a83672c565f78f5fc8f1e44e5f2726446cc6b765113efd21d03e9331747d9ab"},
 ]
 tox = [
     {file = "tox-3.24.5-py2.py3-none-any.whl", hash = "sha256:be3362472a33094bce26727f5f771ca0facf6dafa217f65875314e9a6600c95c"},
