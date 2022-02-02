@@ -4,6 +4,10 @@
 
 import re
 
+PORTS_STR_RE = re.compile(
+    r"(?:(?P<published>[\d]{1,5}):)?(?:(?P<target>\d{1,5})(?:$|(?=/(?P<protocol>tcp$|udp$))))"
+)
+
 
 def set_service_ports(ports):
     """Function to define common structure to ports
@@ -12,17 +16,16 @@ def set_service_ports(ports):
     :rtype: list
     """
     service_ports = []
-    for port in ports:
-        if isinstance(port, str):
-            ports_str_re = re.compile(
-                r"(?:(?P<published>\d{1,5})?(?::))?(?P<target>\d{1,5})(?:(?=/(?P<protocol>udp|tcp)))?"
-            )
-            parts = ports_str_re.match(port)
+    for src_port in ports:
+        the_port = {}
+        if isinstance(src_port, str):
+
+            parts = PORTS_STR_RE.match(src_port)
             if not parts:
                 raise ValueError(
-                    f"Port {port} is not valid. Must match", ports_str_re.pattern
+                    f"Port {src_port} is not valid. Must match", PORTS_STR_RE.pattern
                 )
-            port = {
+            the_port = {
                 "protocol": parts.group("protocol") or "tcp",
                 "published": int(parts.group("published"))
                 if isinstance(parts.group("published"), str)
@@ -30,17 +33,24 @@ def set_service_ports(ports):
                 "target": int(parts.group("target")),
                 "mode": "awsvpc",
             }
-        elif isinstance(port, dict):
-            port["mode"] = "awsvpc"
-        elif isinstance(port, int):
-            port = {
+        elif isinstance(src_port, dict):
+            the_port = src_port
+            the_port["mode"] = "awsvpc"
+        elif isinstance(src_port, int):
+            the_port = {
                 "protocol": "tcp",
-                "published": port,
-                "target": port,
+                "published": src_port,
+                "target": src_port,
                 "mode": "awsvpc",
             }
-        if port["published"] not in [s_port["published"] for s_port in service_ports]:
-            service_ports.append(port)
+        if not service_ports:
+            service_ports.append(the_port)
+        elif service_ports and the_port["published"] not in [
+            s_port["published"] for s_port in service_ports if "published" in s_port
+        ]:
+            service_ports.append(the_port)
         else:
-            print(f"Port {port['published']} is already defined", port, "Skipping")
+            print(
+                f"Port {the_port['published']} is already defined", src_port, "Skipping"
+            )
     return service_ports
