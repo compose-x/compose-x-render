@@ -8,7 +8,12 @@
   "properties": {
     "version": {
       "type": "string",
-      "description": "Version of the Compose specification used. Tools not implementing required version MUST reject the configuration file."
+      "description": "declared for backward compatibility, ignored."
+    },
+
+    "name": {
+      "type": "string",
+      "description": "define the Compose project name, until user defines one explicitly."
     },
 
     "services": {
@@ -86,8 +91,10 @@
                 "context": {"type": "string"},
                 "dockerfile": {"type": "string"},
                 "args": {"$ref": "#/definitions/list_or_dict"},
+                "ssh": {"$ref": "#/definitions/list_or_dict"},
                 "labels": {"$ref": "#/definitions/list_or_dict"},
                 "cache_from": {"type": "array", "items": {"type": "string"}},
+                "cache_to": {"type": "array", "items": {"type": "string"}},
                 "network": {"type": "string"},
                 "target": {"type": "string"},
                 "shm_size": {"type": ["integer", "string"]},
@@ -318,7 +325,7 @@
                   "mode": {"type": "string"},
                   "host_ip": {"type": "string"},
                   "target": {"type": "integer"},
-                  "published": {"type": "integer"},
+                  "published": {"type": ["string", "integer"]},
                   "protocol": {"type": "string"}
                 },
                 "additionalProperties": false,
@@ -410,7 +417,8 @@
                     "type": "object",
                     "properties": {
                       "propagation": {"type": "string"},
-                      "create_host_path": {"type": "boolean"}
+                      "create_host_path": {"type": "boolean"},
+                      "selinux": {"type": "string", "enum": ["z", "Z"]}
                     },
                     "additionalProperties": false,
                     "patternProperties": {"^x-": {}}
@@ -427,8 +435,10 @@
                     "type": "object",
                     "properties": {
                       "size": {
-                        "type": "integer",
-                        "minimum": 0
+                        "oneOf": [
+                          {"type": "integer", "minimum": 0},
+                          {"type": "string"}
+                        ]
                       }
                     },
                     "additionalProperties": false,
@@ -517,7 +527,8 @@
               "type": "object",
               "properties": {
                 "cpus": {"type": ["number", "string"]},
-                "memory": {"type": "string"}
+                "memory": {"type": "string"},
+                "pids": {"type": "integer"}
               },
               "additionalProperties": false,
               "patternProperties": {"^x-": {}}

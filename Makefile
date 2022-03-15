@@ -89,8 +89,8 @@ dist: clean ## builds source and wheel package
 	poetry build
 	ls -l dist
 
-install: clean ## install the package to the active Python's site-packages
-	pip install . --use-pep517 --use-feature=in-tree-build
+install: clean conform ## install the package to the active Python's site-packages
+	pip install . --use-pep517
 
 conform : ## Conform to a standard of coding syntax
 		isort --profile black compose_x_render

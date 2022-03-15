@@ -43,6 +43,9 @@ services:
         protocol: tcp
         published: 5000
         target: 5000
+      - 5000:3000/udp
+      - 5000:3000/tcp
+      - 443
     secrets:
       - zyx
     x-logging:
