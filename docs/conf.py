@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # compose_x_render documentation build configuration file, created by
 # sphinx-quickstart on Fri Jun  9 13:47:02 2017.
@@ -48,9 +47,9 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"ECS Compose-X"
-copyright = u"2020-2021, John Mille"
-author = u"John Preston"
+project = "ECS Compose-X"
+copyright = "2020-2021, John Mille"
+author = "John Preston"
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -87,8 +86,8 @@ todo_include_todos = True
 #
 # html_theme = 'alabaster'
 
-import sphinx_rtd_theme
 import sphinx_material
+import sphinx_rtd_theme
 
 extensions += [
     "sphinx.ext.todo",
@@ -170,8 +169,8 @@ latex_documents = [
     (
         master_doc,
         "compose_x_render.tex",
-        u"Compose-X - Render Documentation",
-        u"John Preston",
+        "Compose-X - Render Documentation",
+        "John Preston",
         "manual",
     ),
 ]
@@ -181,7 +180,9 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "compose_x_render", u"Compose-X - Render Documentation", [author], 1)]
+man_pages = [
+    (master_doc, "compose_x_render", "Compose-X - Render Documentation", [author], 1)
+]
 
 
 # -- Options for Texinfo output ----------------------------------------
@@ -193,7 +194,7 @@ texinfo_documents = [
     (
         master_doc,
         "compose_x_render",
-        u"Compose X - Render Documentation",
+        "Compose X - Render Documentation",
         author,
         "compose_x_render",
         "Merge/Combine multiple docker-compose configuration files into a single one.",

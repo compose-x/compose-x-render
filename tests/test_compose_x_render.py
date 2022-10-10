@@ -2,18 +2,17 @@
 
 """Tests for `compose_x_render` package."""
 
-from unittest import mock
 import os
-import pytest
-
+from os import path
 from tempfile import TemporaryDirectory
-from compose_x_render.compose_x_render import ComposeDefinition
-from compose_x_render.networking import PORTS_STR_RE
-from compose_x_render.envsubst import expandvars
+from unittest import mock
+
+import pytest
 from jsonschema.exceptions import ValidationError
 
-
-from os import path
+from compose_x_render.compose_x_render import ComposeDefinition
+from compose_x_render.envsubst import expandvars
+from compose_x_render.networking import PORTS_STR_RE
 
 HERE = path.abspath(path.dirname(__file__))
 

@@ -14,5 +14,3 @@ To use Compose-X Render in a project
 
     compose_content = ComposeDefinition(["/path/to/file.yaml", "/path/to/file2.yaml"])
     print(compose_content.definition)
-
-
