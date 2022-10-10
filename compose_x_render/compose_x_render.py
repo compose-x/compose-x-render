@@ -1,11 +1,13 @@
-#   -*- coding: utf-8 -*-
 #  SPDX-License-Identifier: MPL-2.0
-#  Copyright 2020-2021 John Mille <john@compose-x.io>
+#  Copyright 2020-2022 John Mille <john@compose-x.io>
 
 """Main module."""
+
+from __future__ import annotations
+
 import json
 from copy import deepcopy
-from os import path
+from typing import Union
 
 import jsonschema
 import yaml
@@ -108,12 +110,9 @@ def merge_service_definition(original_def, override_def, nested=False):
     return original_def
 
 
-def interpolate_env_vars(content, default_empty):
+def interpolate_env_vars(content: dict, default_empty: Union[None, str]):
     """
-    Function to interpolate env vars from content
-
-    :param dict content:
-    :return:
+    Function to interpolate env vars from content for string values.
     """
     if not content:
         return
@@ -132,7 +131,7 @@ def interpolate_env_vars(content, default_empty):
             )
 
 
-def merge_services_from_files(original_services, override_services):
+def merge_services_from_files(original_services: dict, override_services: dict) -> None:
     """
     Function to merge two docker compose files content.
 
@@ -151,29 +150,38 @@ def merge_services_from_files(original_services, override_services):
             original_services.update({service_name: override_services[service_name]})
 
 
-def handle_lists_merges(original_list, override_list, uniqfy=False):
+def handle_lists_merges(
+    original_list: list[Union[str, dict, list]],
+    override_list: list[Union[str, dict, list]],
+    uniqfy=False,
+) -> list:
     """
+    Function to merge list items.
+    Dict/Mappings may be duplicate
+    Str may not be duplicate
+    Lists trigger recursion, although in compose there is no list of lists in the definition.
 
     :param list original_list: The original list to add the override ones to
     :param list override_list: The lost of items to add up
-    :param bool uniqfy: Whether you are expecting identical dicts which should be filtered to be uniqu based on values.
-    :return: The merged list
-    :rtype: list
+    :param bool uniqfy: Whether you are expecting identical dicts which should be filtered to be unique based on key/values.
     """
-    final_list = []
-
+    final_list: list = []
+    # Adding up dict/mappins items
     final_list += [item for item in original_list if isinstance(item, dict)]
     final_list += [item for item in override_list if isinstance(item, dict)]
     if uniqfy:
-        final_list = [dict(y) for y in set(tuple(x.items()) for x in final_list)]
-    original_str_items = [item for item in original_list if isinstance(item, list)]
+        final_list = [dict(y) for y in {tuple(x.items()) for x in final_list}]
+
+    # Adding up str items
+    original_str_items = [item for item in original_list if isinstance(item, str)]
     final_list += list(
         set(
             original_str_items
-            + [item for item in override_list if isinstance(item, list)]
+            + [item for item in override_list if isinstance(item, str)]
         )
     )
 
+    # Adding up lists together.
     origin_list_items = [item for item in original_list if isinstance(item, list)]
     override_list_items = [item for item in override_list if isinstance(item, list)]
 
@@ -187,7 +195,9 @@ def handle_lists_merges(original_list, override_list, uniqfy=False):
     return final_list
 
 
-def handle_lists_merge_conditions(original_def, override_def, key):
+def handle_lists_merge_conditions(
+    original_def: dict, override_def: dict, key: str
+) -> None:
     """
     Function to handle lists merging and whether some additional handling is necessary for duplicates
 
@@ -215,26 +225,19 @@ def handle_lists_merge_conditions(original_def, override_def, key):
         )
 
 
-def load_compose_file(file_path):
+def load_compose_file(file_path) -> Union[dict, list]:
     """
-    Read docker compose file content and load via YAML
-
-    :param str file_path: path to the docker compose file
-    :return: content of the docker file
-    :rtype: dict
+    Read docker compose file content and load with YAML
     """
-    with open(file_path, "r") as composex_fd:
+    with open(file_path) as composex_fd:
         return yaml.load(composex_fd.read(), Loader=Loader)
 
 
-def merge_definitions(original_def, override_def, nested=False):
+def merge_definitions(
+    original_def: dict, override_def: dict, nested: bool = False
+) -> dict:
     """
     Merges two services definitions if service exists in both compose files.
-
-    :param bool nested:
-    :param dict original_def:
-    :param dict override_def:
-    :return:
     """
     if not nested:
         original_def = deepcopy(original_def)
@@ -261,13 +264,9 @@ def merge_definitions(original_def, override_def, nested=False):
     return original_def
 
 
-def merge_config_files(original_content, override_content):
+def merge_config_files(original_content: dict, override_content: dict) -> None:
     """
     Function to merge everything that is not services
-
-    :param dict original_content:
-    :param dict override_content:
-    :return:
     """
 
     for compose_key in override_content:
@@ -299,13 +298,17 @@ def merge_config_files(original_content, override_content):
             original_content[compose_key] = override_content[compose_key]
 
 
-class ComposeDefinition(object):
+class ComposeDefinition:
 
     input_file_arg = "ComposeFiles"
     compose_x_arg = "ForCompose-X"
 
     def __init__(
-        self, files_list, content=None, no_interpolate=False, keep_if_undefined=False
+        self,
+        files_list: list[str],
+        content: dict = None,
+        no_interpolate: bool = False,
+        keep_if_undefined: bool = False,
     ):
         """
         Main function to define and merge the content of the docker files
@@ -334,7 +337,9 @@ class ComposeDefinition(object):
             json.loads(source.read_text()),
         )
 
-    def write_output(self, output_file=None, for_compose_x=False):
+    def write_output(
+        self, output_file: str = None, for_compose_x: bool = False
+    ) -> None:
         """
         Method to write the content down into a file
 
@@ -357,7 +362,7 @@ class ComposeDefinition(object):
             with open(output_file, "w") as file_fd:
                 file_fd.write(yaml.safe_dump(output))
 
-    def output_services_images(self, output_file=None):
+    def output_services_images(self, output_file: str = None):
         output_map = {}
         for name, service in self.definition[SERVICES].items():
             if keyisset("image", service):
