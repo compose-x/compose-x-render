@@ -13,6 +13,8 @@ import jsonschema
 import yaml
 from importlib_resources import files as pkg_files
 
+from compose_x_render.list_management import handle_lists_merges
+
 try:
     from yaml import CDumper as Dumper
     from yaml import CLoader as Loader
@@ -94,8 +96,17 @@ def merge_service_definition(original_def, override_def, nested=False):
                     "with",
                     type(override_def[key]),
                 )
-            original_def[key] = handle_lists_merges(
-                original_def[key], override_def[key]
+            handle_lists_merge_conditions(
+                original_def,
+                override_def,
+                key,
+                keys_to_uniqfy=[
+                    VOLUMES,
+                    SECRETS,
+                    "ManagedPolicyArns",
+                    "AwsSources",
+                    "ExtSources",
+                ],
             )
         elif (
             isinstance(override_def[key], list)
@@ -150,53 +161,8 @@ def merge_services_from_files(original_services: dict, override_services: dict) 
             original_services.update({service_name: override_services[service_name]})
 
 
-def handle_lists_merges(
-    original_list: list[Union[str, dict, list]],
-    override_list: list[Union[str, dict, list]],
-    uniqfy=False,
-) -> list:
-    """
-    Function to merge list items.
-    Dict/Mappings may be duplicate
-    Str may not be duplicate
-    Lists trigger recursion, although in compose there is no list of lists in the definition.
-
-    :param list original_list: The original list to add the override ones to
-    :param list override_list: The lost of items to add up
-    :param bool uniqfy: Whether you are expecting identical dicts which should be filtered to be unique based on key/values.
-    """
-    final_list: list = []
-    # Adding up dict/mappins items
-    final_list += [item for item in original_list if isinstance(item, dict)]
-    final_list += [item for item in override_list if isinstance(item, dict)]
-    if uniqfy:
-        final_list = [dict(y) for y in {tuple(x.items()) for x in final_list}]
-
-    # Adding up str items
-    original_str_items = [item for item in original_list if isinstance(item, str)]
-    final_list += list(
-        set(
-            original_str_items
-            + [item for item in override_list if isinstance(item, str)]
-        )
-    )
-
-    # Adding up lists together.
-    origin_list_items = [item for item in original_list if isinstance(item, list)]
-    override_list_items = [item for item in override_list if isinstance(item, list)]
-
-    if origin_list_items and override_list_items:
-        merged_lists = handle_lists_merges(origin_list_items, override_list_items)
-        final_list += merged_lists
-    elif origin_list_items and not override_list_items:
-        final_list += origin_list_items
-    elif not origin_list_items and override_list_items:
-        final_list += override_list_items
-    return final_list
-
-
 def handle_lists_merge_conditions(
-    original_def: dict, override_def: dict, key: str
+    original_def: dict, override_def: dict, key: str, keys_to_uniqfy: list[str]
 ) -> None:
     """
     Function to handle lists merging and whether some additional handling is necessary for duplicates
@@ -204,8 +170,8 @@ def handle_lists_merge_conditions(
     :param dict original_def: The src definition
     :param dict override_def: The override definition to merge to src.
     :param str key: The key name of the list object
+    :param list[dict] keys_to_uniqfy: List of keys in the dict definition that require unique items.
     """
-    keys_to_uniqfy = [VOLUMES, SECRETS]
     if not isinstance(original_def[key], list):
         raise TypeError(
             "Cannot merge",
@@ -237,7 +203,7 @@ def merge_definitions(
     original_def: dict, override_def: dict, nested: bool = False
 ) -> dict:
     """
-    Merges two services definitions if service exists in both compose files.
+    Merges resources and non services definitions together.
     """
     if not nested:
         original_def = deepcopy(original_def)
@@ -253,20 +219,44 @@ def merge_definitions(
         elif key not in original_def:
             original_def[key] = override_def[key]
         elif isinstance(override_def[key], list) and key in original_def.keys():
-            handle_lists_merge_conditions(original_def, override_def, key)
+            handle_lists_merge_conditions(
+                original_def,
+                override_def,
+                key,
+                keys_to_uniqfy=[
+                    "ManagedPolicyArns",
+                    "AwsSources",
+                    "ExtSources",
+                ],
+            )
         elif isinstance(override_def[key], list) and key not in original_def.keys():
-            original_def[key] = override_def[key]
+            original_def[key]: list = []
+            handle_lists_merge_conditions(
+                original_def,
+                override_def,
+                key,
+                keys_to_uniqfy=[
+                    "ManagedPolicyArns",
+                    "AwsSources",
+                    "ExtSources",
+                ],
+            )
 
         elif isinstance(override_def[key], str):
             original_def[key] = expandvars(override_def[key])
         else:
             original_def[key] = override_def[key]
+    for key, value in original_def.items():
+        if isinstance(value, list) and key in [VOLUMES, SECRETS]:
+            original_def[key] = handle_lists_merges(value, [], uniqfy=True)
     return original_def
 
 
 def merge_config_files(original_content: dict, override_content: dict) -> None:
     """
-    Function to merge everything that is not services
+    Function to merge everything that is not services.
+    For services, we use function merge_services_from_files
+    For x-resources and everything else, use merge_definitions
     """
 
     for compose_key in override_content:
@@ -299,7 +289,6 @@ def merge_config_files(original_content: dict, override_content: dict) -> None:
 
 
 class ComposeDefinition:
-
     input_file_arg = "ComposeFiles"
     compose_x_arg = "ForCompose-X"
 
