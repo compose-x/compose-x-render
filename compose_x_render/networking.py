@@ -73,7 +73,6 @@ def add_port_to_service_ports(service_ports: list, new_port: dict) -> None:
         ]:
             service_ports.append(new_port)
     elif service_ports and keyisset("published", new_port):
-
         if new_port["published"] not in [
             _port["published"] for _port in same_protocol_published_ports
         ]:
