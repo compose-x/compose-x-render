@@ -196,7 +196,7 @@ def load_compose_file(file_path) -> Union[dict, list]:
     Read docker compose file content and load with YAML
     """
     with open(file_path) as composex_fd:
-        return yaml.load(composex_fd.read(), Loader=Loader)
+        return json.loads(json.dumps(yaml.load(composex_fd.read(), Loader=Loader)))
 
 
 def merge_definitions(
