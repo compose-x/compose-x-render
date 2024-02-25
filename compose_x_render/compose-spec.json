@@ -91,6 +91,7 @@
       "type": "object",
 
       "properties": {
+        "develop": {"$ref": "#/definitions/development"},
         "deploy": {"$ref": "#/definitions/deployment"},
         "annotations": {"$ref": "#/definitions/list_or_dict"},
         "attach": {"type": "boolean"},
@@ -119,6 +120,7 @@
                 "privileged": {"type": "boolean"},
                 "secrets": {"$ref": "#/definitions/service_config_or_secret"},
                 "tags": {"type": "array", "items": {"type": "string"}},
+                "ulimits": {"$ref": "#/definitions/ulimits"},
                 "platforms": {"type": "array", "items": {"type": "string"}}
               },
               "additionalProperties": false,
@@ -213,7 +215,7 @@
         "dns_search": {"$ref": "#/definitions/string_or_list"},
         "domainname": {"type": "string"},
         "entrypoint": {"$ref": "#/definitions/command"},
-        "env_file": {"$ref": "#/definitions/string_or_list"},
+        "env_file": {"$ref": "#/definitions/env_file"},
         "environment": {"$ref": "#/definitions/list_or_dict"},
 
         "expose": {
@@ -292,6 +294,7 @@
                         "ipv4_address": {"type": "string"},
                         "ipv6_address": {"type": "string"},
                         "link_local_ips": {"$ref": "#/definitions/list_of_strings"},
+                        "mac_address": {"type": "string"},
                         "priority": {"type": "number"}
                       },
                       "additionalProperties": false,
@@ -319,6 +322,7 @@
               {
                 "type": "object",
                 "properties": {
+                  "name": {"type": "string"},
                   "mode": {"type": "string"},
                   "host_ip": {"type": "string"},
                   "target": {"type": "integer"},
@@ -355,26 +359,7 @@
         "storage_opt": {"type": "object"},
         "tmpfs": {"$ref": "#/definitions/string_or_list"},
         "tty": {"type": "boolean"},
-        "ulimits": {
-          "type": "object",
-          "patternProperties": {
-            "^[a-z]+$": {
-              "oneOf": [
-                {"type": "integer"},
-                {
-                  "type": "object",
-                  "properties": {
-                    "hard": {"type": "integer"},
-                    "soft": {"type": "integer"}
-                  },
-                  "required": ["soft", "hard"],
-                  "additionalProperties": false,
-                  "patternProperties": {"^x-": {}}
-                }
-              ]
-            }
-          }
-        },
+        "ulimits": {"$ref": "#/definitions/ulimits"},
         "user": {"type": "string"},
         "uts": {"type": "string"},
         "userns_mode": {"type": "string"},
@@ -457,10 +442,32 @@
           ]
         },
         "timeout": {"type": "string", "format": "duration"},
-        "start_period": {"type": "string", "format": "duration"}
+        "start_period": {"type": "string", "format": "duration"},
+        "start_interval": {"type": "string", "format": "duration"}
       },
       "additionalProperties": false,
       "patternProperties": {"^x-": {}}
+    },
+    "development": {
+      "id": "#/definitions/development",
+      "type": ["object", "null"],
+      "properties": {
+        "watch": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ignore": {"type": "array", "items": {"type": "string"}},
+              "path": {"type": "string"},
+              "action": {"type": "string", "enum": ["rebuild", "sync", "sync+restart"]},
+              "target": {"type": "string"}
+            }
+          },
+          "required": ["path", "action"],
+          "additionalProperties": false,
+          "patternProperties": {"^x-": {}}
+        }
+      }
     },
     "deployment": {
       "id": "#/definitions/deployment",
@@ -591,12 +598,12 @@
       "items": {
         "type": "object",
         "properties": {
-            "capabilities": {"$ref": "#/definitions/list_of_strings"},
-            "count": {"type": ["string", "integer"]},
-            "device_ids": {"$ref": "#/definitions/list_of_strings"},
-            "driver":{"type": "string"},
-            "options":{"$ref": "#/definitions/list_or_dict"}
-          },
+          "capabilities": {"$ref": "#/definitions/list_of_strings"},
+          "count": {"type": ["string", "integer"]},
+          "device_ids": {"$ref": "#/definitions/list_of_strings"},
+          "driver":{"type": "string"},
+          "options":{"$ref": "#/definitions/list_or_dict"}
+        },
         "additionalProperties": false,
         "patternProperties": {"^x-": {}}
       }
@@ -742,6 +749,8 @@
       "type": "object",
       "properties": {
         "name": {"type": "string"},
+        "content": {"type": "string"},
+        "environment": {"type": "string"},
         "file": {"type": "string"},
         "external": {
           "type": ["boolean", "object"],
@@ -764,6 +773,36 @@
         {"type": "null"},
         {"type": "string"},
         {"type": "array","items": {"type": "string"}}
+      ]
+    },
+
+    "env_file": {
+      "oneOf": [
+        {"type": "string"},
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {"type": "string"},
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "required": {
+                    "type": "boolean",
+                    "default": true
+                  }
+                },
+                "required": [
+                  "path"
+                ]
+              }
+            ]
+          }
+        }
       ]
     },
 
@@ -811,7 +850,6 @@
       },
       "additionalProperties": false
     },
-
     "service_config_or_secret": {
       "type": "array",
       "items": {
@@ -832,7 +870,26 @@
         ]
       }
     },
-
+    "ulimits": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z]+$": {
+          "oneOf": [
+            {"type": "integer"},
+            {
+              "type": "object",
+              "properties": {
+                "hard": {"type": "integer"},
+                "soft": {"type": "integer"}
+              },
+              "required": ["soft", "hard"],
+              "additionalProperties": false,
+              "patternProperties": {"^x-": {}}
+            }
+          ]
+        }
+      }
+    },
     "constraints": {
       "service": {
         "id": "#/definitions/constraints/service",
