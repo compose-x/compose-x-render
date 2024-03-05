@@ -22,6 +22,7 @@ def handle_str_definition(src_port: str) -> dict:
     }
     if isinstance(parts.group("published"), str):
         the_port["published"] = int(parts.group("published"))
+    the_port["name"] = f"{the_port['protocol']}_{the_port['target']}"
     return the_port
 
 
@@ -46,13 +47,9 @@ def replace_published_port(
 
 def add_port_to_service_ports(service_ports: list, new_port: dict) -> None:
     """
-    Adds the new port to the service ports definition.
+    Adds the new port to the service ``ports`` definition.
     If the port has ``published`` defined, checks whether it can be added or needs updating the target
     if already defined.
-
-    :param service_ports:
-    :param new_port:
-    :return:
     """
     same_protocol_published_ports = [
         s_port
@@ -83,12 +80,8 @@ def add_port_to_service_ports(service_ports: list, new_port: dict) -> None:
             replace_published_port(service_ports, new_port["published"], new_port)
 
 
-def set_service_ports(ports):
-    """Function to define common structure to ports
-
-    :return: list of ports the ecs_service uses formatted according to dict
-    :rtype: list
-    """
+def set_service_ports(ports: list):
+    """Function to define common structure to ports"""
     service_ports = []
     for src_port in ports:
         the_port = {}
@@ -97,6 +90,9 @@ def set_service_ports(ports):
         elif isinstance(src_port, dict):
             the_port = src_port
             the_port["protocol"] = set_else_none("protocol", src_port, "tcp")
+            the_port["name"] = set_else_none(
+                "name", src_port, f"{the_port['protocol']}_{the_port['target']}"
+            )
         elif isinstance(src_port, int):
             the_port = {
                 "protocol": "tcp",

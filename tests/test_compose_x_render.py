@@ -12,7 +12,7 @@ from jsonschema.exceptions import ValidationError
 
 from compose_x_render.compose_x_render import ComposeDefinition
 from compose_x_render.envsubst import expandvars
-from compose_x_render.networking import PORTS_STR_RE
+from compose_x_render.networking import PORTS_STR_RE, set_service_ports
 
 HERE = path.abspath(path.dirname(__file__))
 
@@ -86,3 +86,18 @@ def test_invalid_ports_strings():
     assert PORTS_STR_RE.match("80abc") is None
     assert PORTS_STR_RE.match("81:80aa") is None
     assert PORTS_STR_RE.match("80:80/toienstienp") is None
+
+
+def test_service_ports_names():
+    ports_input: list = [
+        "8080:80/tcp",
+        {"target": 443, "published": 443, "protocol": "tcp"},
+        {"target": 8443, "published": 8443, "protocol": "tcp", "name": "alt_https"},
+        {"target": 69, "published": 69, "protocol": "udp"},
+    ]
+    service_ports = set_service_ports(ports_input)
+    port_names = [_port["name"] for _port in service_ports]
+    assert "tcp_80" in port_names
+    assert "tcp_443" in port_names
+    assert "udp_69" in port_names
+    assert "alt_https" in port_names
